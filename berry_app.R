@@ -40,15 +40,66 @@ font-size: 15px;
 
 
 
-
-
 # Define UI
 ui <- fluidPage(
     titlePanel("Berries Project"),
     navbarPage("Quick Stats for Strawberries",theme=shinytheme("lumen"),
-    # Application title
-               tabPanel("Chemical Comparison",fluid=TRUE,icon=icon("bong"),tags$style(button_color_css),
-    #tags$h2("Comparison of Chemical Treatments on Strawberries"),
+    tabPanel("Dataset Overview",fluid=TRUE,icon=icon("table"),
+             sidebarLayout(
+                 sidebarPanel(
+                     titlePanel("Characteristics"),
+                     
+                     #select type
+                     fluidRow(column(6,
+                                     selectInput(inputId="TypeFinder",
+                                                 label = "Select Type",
+                                                 choices=unique(sberry$Status),
+                                                 selected = "ACRES HARVESTED",
+                                                 width="220px"
+                                     )),
+                              
+                              #select State
+                              column(6,
+                                     checkboxGroupInput(inputId="StateFinder",
+                                                        label="Select State(s):",
+                                                        choices=unique(sberry$State),
+                                                        selected="CALIFORNIA")
+                              )),
+                     hr(),
+                     fluidRow(column(6,
+                     sliderInput(inputId = "YearFinder",
+                                 label = "Select Time Range:",
+                                 min=2015,
+                                 max=2019,
+                                 value=c(2015,2016),
+                                 width="220px")),
+                     hr(),
+                     column(6,
+                     checkboxGroupInput(inputId="ChemFinder",
+                                        label="Select Chemical:",
+                                        choices=unique(sberry$Chem),
+                                        selected="NOT SPECIFIED"))
+                     
+                 ),
+                 hr(),
+                    fluidRow(
+                        selectInput(inputId="MeasureFinder",
+                                    label = "Select Measurement",
+                                    choices= unique(sberry$Measure),
+                                    width="220px"
+                        )
+                    )
+                 ),
+                 mainPanel(
+                     fluidRow(column(12,
+                                     withSpinner(dataTableOutput(outputId = "Table"))
+                     ))
+                     )      
+                 )), 
+             
+    ##Chemical Comparison
+    tabPanel("Chemical Comparison",fluid=TRUE,icon=icon("bong"),tags$style(button_color_css),
+    tags$h2(p(icon("chart-pie"),"Comparison of Chemical Treatments on Strawberries")),
     hr(),
     fluidRow(
         column(6,tags$h3("Condition A")),
@@ -123,17 +174,60 @@ ui <- fluidPage(
                plotOutput("a_Pie")),
         column(6,tags$h4("Pie Chart for Condition B"),
                plotOutput("b_Pie"))
-    ),
-    tags$h4("Table of Condition A"),
-    hr(),
-    fluidRow(
-               dataTableOutput("a_Table")),
-    tags$h4("Table of Condition B"),
-    hr(),
-    fluidRow(
-               dataTableOutput("b_Table")
     )
     ),
+    
+    ##Production Analysis
+    tabPanel("Production Analysis",icon=icon("chart-line"),fluid=TRUE,
+            tags$style(button_color_css),
+             sidebarLayout(
+                 sidebarPanel(width=3,
+                     titlePanel("Characteristics"),
+                     
+                     #select type
+                     fluidRow(
+                         column(5,
+                                     selectInput(inputId="TypeFinder3",
+                                                 label = "Select Type",
+                                                 choices=unique(sberry$Status)[which(str_detect(unique(sberry$Status),"PRODUCTION"))],
+                                                 selected = "PRODUCTION",
+                                                 width="220px"
+                                     )),
+
+                              #select State
+                              column(5,
+                                     checkboxGroupInput(inputId="StateFinder3",
+                                                        label="Select State(s):",
+                                                        choices=unique(sberry$State),
+                                                        selected="CALIFORNIA")
+                              )),
+                     hr(),
+                     # sliderInput(inputId = "YearFinder3",
+                     #             label = "Select Time Range:",
+                     #             min=2015,
+                     #             max=2019,
+                     #             value=c(2015,2016),
+                     #             width="220px"),
+                     # hr(),
+                     selectInput(inputId="MeasureFinder3",
+                                 label = "Select Measurement",
+                                 choices= unique(sberry$Measure),
+                                 width="220px"
+                     )
+                     
+                 ),
+                 mainPanel(
+                     fluidRow(column(12,tags$h4("Boxplot"),
+                                     plotOutput("Boxplot")
+                                     
+                                     
+                     )),
+                     fluidRow(dataTableOutput("Table3"))
+                 ) 
+             )
+    ),
+    
+    ##More Info
     tabPanel("More",icon=icon("info-circle"),
              fluidRow(
                         hr(),
@@ -152,7 +246,26 @@ ui <- fluidPage(
     ))
 
 # Define server logic required to draw a histogram
-server <- function(input, output) {
+server <- function(session,input, output) {
+    observe({
+        x<-BerryFinder()%>%select("Measure")%>%unique()
+        updateSelectInput(session,"MeasureFinder",label="Select Measurement",choices=x,selected=tail(x,1))
+    })
+    observe({
+        x3<-BerryFinder3()%>%select("Measure")%>%unique()
+        updateSelectInput(session,"MeasureFinder3",label="Select Measurement",choices=x3,selected=head(x3,1))
+    })
+    BerryFinder<-reactive({
+        req(input$TypeFinder)
+        req(input$StateFinder)
+        req(input$YearFinder)
+        req(input$ChemFinder)
+        filter(sberry,Status %in% input$TypeFinder)%>%
+            filter(State %in% input$StateFinder)%>%
+            filter(Year >= input$YearFinder[1],Year<=input$YearFinder[2])%>%
+            filter(Chem %in% input$ChemFinder)
+    })
+
     BerryFinder1<-reactive({
         req(input$TypeFinder1)
         req(input$StateFinder1)
@@ -173,12 +286,18 @@ server <- function(input, output) {
             filter(Year >= input$YearFinder2[1],Year<=input$YearFinder2[2])%>%
             filter(Chem %in% input$ChemFinder2)
     })
-    
-    output$a_Table<-renderDataTable({
-        datatable(BerryFinder1())
+    BerryFinder3<-reactive({
+        req(input$TypeFinder3)
+        req(input$StateFinder3)
+        filter(sberry,State %in% input$StateFinder3)%>%
+            filter(Status %in% input$TypeFinder3)%>%
+           # filter(Year >= input$YearFinder[1],Year<=input$YearFinder[2])%>%
+        select(-c("Chem","killer","Compound","Compound.Value"))
     })
-    output$b_Table<-renderDataTable({
-        datatable(BerryFinder2())
+
+    
+    output$Table<-renderDataTable({
+        datatable(BerryFinder()%>%filter(Measure %in% input$MeasureFinder))
     })
     output$a_Hist<-renderPlot({
         ggplot(BerryFinder1(),aes(x=killer,color=Chem,fill=Chem))+geom_histogram(position="identity",stat="count")
@@ -220,9 +339,17 @@ server <- function(input, output) {
         ggplot(BerryFinder2(),aes(x="killer",color=Chem,fill=killer))+geom_bar(stat="count",position="stack",width=1)+
             coord_polar(theta="y",start=0)+labs(x='',y='',title='')+geom_text(stat="count",aes(label = scales::percent(..count../sum(..count..))), size=5, position=position_stack(vjust = 0.5),col="black")
     })
+    output$Boxplot<-renderPlot({
+       df<-BerryFinder3()%>%filter(Measure %in% input$MeasureFinder3)
+       ggplot(data=df, mapping=aes(x=Year,y = Value,size=Value,color=State))+ geom_point()
+    })
+    output$Table3<-renderDataTable({
+        datatable(BerryFinder3()%>%filter(Measure %in% input$MeasureFinder3))
+    })
     
 
 }
 
 # Run the application 
 shinyApp(ui = ui, server = server)
+

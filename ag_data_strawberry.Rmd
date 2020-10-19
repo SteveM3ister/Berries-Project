@@ -195,7 +195,7 @@ sberry[is.na(sberry)] <- " "
 
 
 
-sberry%<>%separate(DC_right_r,c("Compound","Coumpound Value"),sep=" = ")
+sberry%<>%separate(DC_right_r,c("Compound","Compound Value"),sep=" = ")
 for(i in 1:length(sberry$Year)){
   if (sberry$DC_left_r[i]!=" "){
     sberry$Compound[i]=sberry$DC_left_r[i]
@@ -204,7 +204,7 @@ for(i in 1:length(sberry$Year)){
 }
 sberry%<>%select(-DC_left_r)
 sberry$Compound%<>%str_replace_all("[\\(\\)]","")
-sberry$`Coumpound Value`%<>%str_replace_all("[\\(\\)]","")
+sberry$`Compound Value`%<>%str_replace_all("[\\(\\)]","")
 sberry$Value%<>%str_replace_all("\\((.*?)\\)"," ")
 
 
