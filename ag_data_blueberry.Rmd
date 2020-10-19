@@ -164,46 +164,67 @@ bberry[is.na(bberry)] <- " "
 
 #bberry$lab2%>%unique()
 bberry%<>%select(-c(DC_right_l,DC_left_l))
+bberry['Stats']=" "
 for(i in 1:length(bberry$Year)){
+  if(str_detect(bberry$what[i],"AVG")){
+    bberry$Stats[i]=bberry$what[i]
+  }
   if(str_detect(bberry$meas[i], "MEASURE")){
     bberry$what[i]=bberry$meas[i]
     bberry$meas[i]=" "
   }
 
 }
-bberry%<>%separate(meas,c("Status","Process"),sep="-")
+#%<>%separate(meas,c("Status","Process"),sep="-")
 
 for(i in 1:length(bberry$Year)){
-  if(str_detect(bberry$lab2[i], "HAR")){
-    bberry$Status[i]=bberry$lab2[i]
-  }
-}
-bberry%<>%select(-lab2)
-for(i in 1:length(bberry$Year)){
-  if(str_detect(bberry$lab1[i], "ED")){
-    bberry$Status[i]=bberry$lab1[i]
+  if(bberry$meas[i]==" "){
+    bberry$meas[i]=bberry$lab1[i]
     bberry$lab1[i]=" "
   }
-  else if(str_detect(bberry$lab1[i],"ACRES")){
-    bberry$what[i]=bberry$lab1[i]
-    bberry$lab1[i]=" "
-  }
-  else if(bberry$lab1[i]!=" "){
-    bberry$Process[i]=bberry$lab1[i]
-    bberry$lab1[i]=" "
+  if(bberry$DC_left_r[i]!=" "){
+    bberry$DC_right_r[i]=bberry$DC_left_r[i]
+    bberry$DC_left_r[i]=" "
   }
 }
 
-
-#Check if lab1 is cleaned
-sum(str_detect(bberry$lab1, " ")) == length(bberry$lab1)
+sum(bberry$lab1==" ") == length(bberry$lab1)
 bberry%<>%select(-lab1)
+sum(bberry$DC_left_r==" ") == length(bberry$DC_left_r)
+bberry%<>%select(-DC_left_r)
+
+#######
+for(i in 1:length(bberry$Year)){
+  if(str_detect(bberry$meas[i],"ACRES")){
+    bberry$what[i]=bberry$meas[i]
+    bberry$meas[i]=bberry$lab2[i]
+    bberry$lab2[i]=" "
+  }
+  else if(bberry$meas[i]=="APPLICATIONS"||bberry$meas[i]=="TREATED"){
+    bberry$lab2[i]=bberry$meas[i]
+    bberry$meas[i]=" "
+  }
+}
+
+
+
+bberry$DC_right_r%<>%str_replace_all("[\\(\\)]","")
+
+
+bberry%<>%separate(DC_right_r,c("Compound","Coumpound Value"),sep=" = ")
+bberry$Value%<>%str_replace_all("\\((.*?)\\)"," ")
+
+
 #Elimate NA's
 bberry[is.na(bberry)] <- " "
 #Now the dataset is cleaned.
-bberry%<>%rename(Measure=what,Chem=D_left,killer=D_right,killer_info=DC_left_r,Compound=DC_right_r)
+bberry%<>%rename(Measure=what,Chem=D_left,killer=D_right,Process=lab2,Status=meas)
+bberry$Measure%<>%str_trim()
+bberry$Status%<>%str_trim()
 
 kable(head(bberry, n=10)) %>% kable_styling(font_size=12)
+
+write.table(bberry,"bberry.csv",col.names=TRUE,sep=",")
 
 ```
 

@@ -1,29 +1,11 @@
----
-title: "Cleaning Berries"
-author: "MA615"
-date: "10/6/2020"
-output: html_document
----
-
-```{r setup, include=FALSE, warning=FALSE, message=FALSE}
 library(knitr)
 library(tidyverse)
 library(magrittr)
-library(kableExtra)
+#library(kableExtra)
 
 opts_chunk$set(echo = FALSE, 
                warning = FALSE,
                message = FALSE)
-```
-
-##  Acquire and read the data
-
-These data were collected from the USDA database selector: <a href="https://quickstats.nass.usda.gov">https://quickstats.nass.usda.gov</a>
-
-The data were <a href="https://quickstats.nass.usda.gov/results/D416E96E-3D5C-324C-9334-1D38DF88FFF1">stored online</a> and then downloaded as a CSV file.
-
-
-```{r}
 
 ## read the data
 
@@ -39,13 +21,6 @@ bb <- which(aa[1,]==1)
 ## list the 1-unique valu column names 
 cn <- colnames(ag_data)[bb]
 
-```
-
-Data selected from the NASS database often has columns without any data or with a single repeated Values.  The berries data had only 8 out of 21 columns containing meaningful data.
-
-```{r}
-
-
 ## remove the 1-unique columns from the dataset
 ag_data %<>% select(-all_of(bb))
 
@@ -58,29 +33,11 @@ ag_data %<>% select(-4)
 aa %<>% select(-4) 
 
 
-kable(head(ag_data)) %>% kable_styling(font_size=12)
+#kable(head(ag_data)) %>% kable_styling(font_size=12)
 
-
-```
-
-<hr>
-<br>
-
-
-
-```{r}
 berry <- unique(ag_data$Commodity)
 nberry <- length(berry)
 
-```
-
-This table contains informaton about `r nberry` berries: blueberries, raspberries, and strawberries.
-
-When the data have been cleaned and organized, the three kinds of berries will be separted into tables with the same stucture so that they can be compared.  So, working with Blueberries along demonstrates how the data will be cleaned and organized for all three kinds of berries. Only the "YEAR" time periond will be considered.
-
-## Blueberries
-
-```{r}
 bberry <- ag_data %>% filter((Commodity=="BLUEBERRIES") & (Period=="YEAR"))
 bberry %<>% select(-c(Period, Commodity))   
 
@@ -110,12 +67,6 @@ bberry[is.na(bberry)] <- " "  ## OK now Data Item has been split into parts
 
 ## onto Domain
 
-```
-
-
-```{r}
-
-
 # bberry$Domain %>% unique()
 
 bberry %<>% separate(Domain, c("D_left", "D_right"), sep = ", ")
@@ -134,8 +85,8 @@ bberry %<>% separate(`Domain Category`, c("DC_left", "DC_right"), sep = ", ")
 
 ## looks like DC_left combines labels
 
-head(bberry$DC_left %>% unique(),n=20)
-head(bberry$DC_right %>% unique(), n=20)
+#head(bberry$DC_left %>% unique(),n=20)
+#head(bberry$DC_right %>% unique(), n=20)
 
 
 ## work on DC_left first
@@ -155,21 +106,19 @@ bberry %<>% separate(DC_right, c("DC_right_l", "DC_right_r"), sep = ": ")
 bberry[is.na(bberry)] <- " "
 
 ##  OK now we need to eliminate the redundancy
-```
-
-
-
-
-```{r}
 
 #bberry$lab2%>%unique()
 bberry%<>%select(-c(DC_right_l,DC_left_l))
+bberry['Stats']=" "
 for(i in 1:length(bberry$Year)){
+  if(str_detect(bberry$what[i],"AVG")){
+    bberry$Stats[i]=bberry$what[i]
+  }
   if(str_detect(bberry$meas[i], "MEASURE")){
     bberry$what[i]=bberry$meas[i]
     bberry$meas[i]=" "
   }
-
+  
 }
 #%<>%separate(meas,c("Status","Process"),sep="-")
 
@@ -178,11 +127,16 @@ for(i in 1:length(bberry$Year)){
     bberry$meas[i]=bberry$lab1[i]
     bberry$lab1[i]=" "
   }
+  if(bberry$DC_left_r[i]!=" "){
+    bberry$DC_right_r[i]=bberry$DC_left_r[i]
+    bberry$DC_left_r[i]=" "
+  }
 }
 
-sum(bberry$lab1==" ") == length(bberry$lab1)
+#sum(bberry$lab1==" ") == length(bberry$lab1)
 bberry%<>%select(-lab1)
-
+#sum(bberry$DC_left_r==" ") == length(bberry$DC_left_r)
+bberry%<>%select(-DC_left_r)
 
 #######
 for(i in 1:length(bberry$Year)){
@@ -195,15 +149,12 @@ for(i in 1:length(bberry$Year)){
     bberry$lab2[i]=bberry$meas[i]
     bberry$meas[i]=" "
   }
-  if(bberry$DC_left_r!=" "){
-    bberry$Compound[i]=bberry$DC_left_r[i]
-  }
 }
 
-sum(bberry$DC_left_r==" ") == length(bberry$DC_left_r)
-bberry%<>%select(-DC_left_r)
+
 
 bberry$DC_right_r%<>%str_replace_all("[\\(\\)]","")
+
 
 bberry%<>%separate(DC_right_r,c("Compound","Coumpound Value"),sep=" = ")
 bberry$Value%<>%str_replace_all("\\((.*?)\\)"," ")
@@ -213,16 +164,9 @@ bberry$Value%<>%str_replace_all("\\((.*?)\\)"," ")
 bberry[is.na(bberry)] <- " "
 #Now the dataset is cleaned.
 bberry%<>%rename(Measure=what,Chem=D_left,killer=D_right,Process=lab2,Status=meas)
+bberry$Measure%<>%str_trim()
+bberry$Status%<>%str_trim()
 
-kable(head(bberry, n=10)) %>% kable_styling(font_size=12)
+#kable(head(bberry, n=10)) %>% kable_styling(font_size=12)
 
-
-
-```
-
-
-
-### Units
-
-
-
+write.table(bberry,"bberry.csv",col.names=TRUE,sep=",")
