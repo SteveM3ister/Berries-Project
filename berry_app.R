@@ -96,6 +96,27 @@ ui <- fluidPage(
                      ))
                      )      
                  )), 
+    ##Basic EDA
+    # tabPanel("Basic EDA",fluid=TRUE,icon=icon("box"),tags$style(button_color_css),
+    #          sidebarLayout(
+    #              sidebarPanel(
+    #                  tags$h2("Make a simple analysis by using boxplot"),
+    #                  hr(),
+    #                  fluidRow(
+    #                  selectInput(inputId="BoxMeasure",
+    #                              label="Select Measurement",
+    #                              choices=unique(sberry$Measure),
+    #                              selected=head(unique(sberry$Measure),1)))
+    #              ),
+    #              mainPanel(
+    #                  fluidRow(column(12,
+    #                                  withSpinner(plotOutput(outputId = "Boxplot"))
+    #                  ))
+    #              )      
+    #          )),
+
+
+
              
     ##Chemical Comparison
     tabPanel("Chemical Comparison",fluid=TRUE,icon=icon("bong"),tags$style(button_color_css),
@@ -217,8 +238,8 @@ ui <- fluidPage(
                      
                  ),
                  mainPanel(
-                     fluidRow(column(12,tags$h4("Boxplot"),
-                                     plotOutput("Boxplot")
+                     fluidRow(column(12,tags$h4("Point Plot"),
+                                     plotOutput("Point")
                                      
                                      
                      )),
@@ -339,13 +360,19 @@ server <- function(session,input, output) {
         ggplot(BerryFinder2(),aes(x="killer",color=Chem,fill=killer))+geom_bar(stat="count",position="stack",width=1)+
             coord_polar(theta="y",start=0)+labs(x='',y='',title='')+geom_text(stat="count",aes(label = scales::percent(..count../sum(..count..))), size=5, position=position_stack(vjust = 0.5),col="black")
     })
-    output$Boxplot<-renderPlot({
+    output$Point<-renderPlot({
        df<-BerryFinder3()%>%filter(Measure %in% input$MeasureFinder3)
        ggplot(data=df, mapping=aes(x=Year,y = Value,size=Value,color=State))+ geom_point()
     })
     output$Table3<-renderDataTable({
         datatable(BerryFinder3()%>%filter(Measure %in% input$MeasureFinder3))
     })
+    # finder<-reactive({
+    #     sberry%>%subset(sberry$Measure == input$BoxMeasure)
+    # })
+    # output$Boxplot<-renderPlot({
+    #         ggplot(data=finder(),mapping=aes(x=State,y=Value))+geom_boxplot(outlier.colour=NA)
+    # })
     
 
 }
