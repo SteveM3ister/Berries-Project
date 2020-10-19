@@ -45,7 +45,7 @@ font-size: 15px;
 # Define UI
 ui <- fluidPage(
     titlePanel("Berries Project"),
-    navbarPage("Quick Stats for Starberries",theme=shinytheme("lumen"),
+    navbarPage("Quick Stats for Strawberries",theme=shinytheme("lumen"),
     # Application title
                tabPanel("Chemical Comparison",fluid=TRUE,icon=icon("bong"),tags$style(button_color_css),
     #tags$h2("Comparison of Chemical Treatments on Strawberries"),
