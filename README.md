@@ -34,27 +34,11 @@ For production, further EDA method should be employed on the dataset. By far, th
 
 The work blueberry.Rmd and strawberry.Rmd is based on the work of Professor Haviland Wright. Special thanks to his instruction, and the help from MSSP students Hao Shen, Ziyi Bai and Chun Gao. 
 
-```latex
-@article{usda2017quick,
-  title={Quick stats},
-  author={USDA, NASS},
-  journal={USDA National Agriculural Statistics Service, Washington, DC https://quickstats. nass. usda. gov/(Accessed 3 May 2019)},
-  year={2017}
-}
-```
+## Reference
 
-```latex
-@article{rstudioshiny,
-  title={Shiny, 2019},
-  author={RStudio, I},
-  journal={URL https://shiny. rstudio. com}
-}
-```
+[1] USDA N. Quick stats[J]. USDA National Agriculural Statistics Service, Washington, DC https://quickstats. nass. usda. gov/(Accessed 3 May 2019), 2017.
 
-```latex
-@article{rstudioweb,
-  title={A web application framework for R},
-  author={RStudio, Shiny},
-  journal={URL: http://shiny. rstudio. com}
-}
-```
+[2]  RStudio I. Shiny, 2019[J]. URL https://shiny. rstudio. com.
+
+[3]  Gandy D. Font Awesome, the iconic font and CSS toolkit[J]. Fortawesome. github. io, 2015.
+
