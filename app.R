@@ -43,6 +43,9 @@ font-size: 15px;
 # Define UI
 ui <- fluidPage(
     titlePanel("Berries Project"),
+    hr(),
+    tags$h5("Created by Yinfeng(Steven) Zhou from Boston University"),
+    hr(),
     navbarPage("Quick Stats for Strawberries",theme=shinytheme("lumen"),
     tabPanel("Dataset Overview",fluid=TRUE,icon=icon("table"),
              sidebarLayout(
@@ -255,8 +258,9 @@ ui <- fluidPage(
                         h3("About this Project"),
                         h4("This project began as practice of ShinyApp for MA615(Data Science in R) of MSSP program in Boston University."),
                         h4("The project is intended to make some quick stats and comparisons for berries(blueberries,strawberries and raspberries) in United States."),
-                        h4(p("These data were collected from the",a("USDA database selector",href="https://quickstats.nass.usda.gov"))),
-                        h4(p("The dataset we use here is from",a("this webpage,",href="https://quickstats.nass.usda.gov/results/D416E96E-3D5C-324C-9334-1D38DF88FFF1"),"downloaded as CSV file")),
+                        h4(p("These data were collected from the",a("USDA database selector",href="https://quickstats.nass.usda.gov"),".")),
+                        h4(p("The dataset we use here is from",a("this webpage,",href="https://quickstats.nass.usda.gov/results/D416E96E-3D5C-324C-9334-1D38DF88FFF1"),"downloaded as CSV file.")),
+                        h4(p("Source code can be accessed from ",a("github",href="https://github.com/SteveM3ister/Berries-Project.git"),".")),
                         hr(),
                         h5("Built with",
                            img(src = "https://www.rstudio.com/wp-content/uploads/2014/04/shiny.png", height = "30px"),
