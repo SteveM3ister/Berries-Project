@@ -5,8 +5,9 @@ account: yinfeng
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 3047119
-bundleId: 3757713
+bundleId: 3760658
 url: https://yinfeng.shinyapps.io/Berries_Project/
-when: 1603100852.66068
+when: 1603159980.16218
 asMultiple: FALSE
 asStatic: FALSE
+ignoredFiles: TempFile/ag_data.R|TempFile/blueberry_app.R|TempFile/strawberry_origin.R

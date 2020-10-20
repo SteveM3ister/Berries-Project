@@ -14,9 +14,9 @@ The author will continue to update the project.
 
 ## Description
 
-By far, data cleaning has only finished on blueberry and strawberry. Further effort on raspberry will be expected. The source code is contained in ag_data_blueberry.Rmd/ag_data_strawberry.Rmd. It is not necessary for you to run these two RMarkdown files. The output datasets from these two files, are bberry.csv and sberry.csv. 
+By far, data cleaning has only finished on blueberry and strawberry, but further effort on raspberry will be expected. The source code is contained in <a herf="https://github.com/SteveM3ister/Berries-Project/blob/master/ag_data_blueberry.Rmd">ag_data_blueberry.Rmd</a> and <a herf="https://github.com/SteveM3ister/Berries-Project/blob/master/ag_data_strawberry.Rmd">ag_data_strawberry.Rmd</a>. It is not necessary for you to run these two RMarkdown files. The output datasets from these two files, are <a herf="https://github.com/SteveM3ister/Berries-Project/blob/master/bberry.csv">bberry.csv</a> and <a herf="https://github.com/SteveM3ister/Berries-Project/blob/master/sberry.csv">sberry.csv</a>. 
 
-The source code for the Shinyapp is contained in the berry_app.R. You can also try running it from <a href="https://yinfeng.shinyapps.io/Berries_Project/">shinyapps.io</a>.(Though the website doesn't work well sometimes. If you have met an error, run the app locally.)
+The source code for the Shinyapp is contained in the <a herf="https://github.com/SteveM3ister/Berries-Project/blob/master/berry_app.R">**berry_app.R**</a>. You can also try running it from <a href="https://yinfeng.shinyapps.io/Berries_Project/">shinyapps.io</a>.(Though the website doesn't work well sometimes. If you have met an error, run the app locally.)
 
 ## The Dataset Overview Tab
 
@@ -36,9 +36,9 @@ The work blueberry.Rmd and strawberry.Rmd is based on the work of Professor Havi
 
 ## Reference
 
-[1] USDA N. Quick stats[J]. USDA National Agriculural Statistics Service, Washington, DC https://quickstats. nass. usda. gov/(Accessed 3 May 2019), 2017.
+[1] USDA N. Quick stats[J]. USDA National Agriculural Statistics Service, Washington, DC https://quickstats.nass.usda.gov/ (Accessed 3 May 2019), 2017.
 
-[2]  RStudio I. Shiny, 2019[J]. URL https://shiny. rstudio. com.
+[2]  RStudio I. Shiny, 2019[J]. URL https://shiny.rstudio.com.
 
-[3]  Gandy D. Font Awesome, the iconic font and CSS toolkit[J]. Fortawesome. github. io, 2015.
+[3]  Gandy D. Font Awesome, the iconic font and CSS toolkit[J]. URL https://fontawesome.com/icons?d=gallery, 2015.
 
